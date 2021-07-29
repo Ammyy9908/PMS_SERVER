@@ -5,7 +5,8 @@ const apiResponse = require("../helpers/apiResponse");
 const utility = require("../helpers/utility");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const secret = process.env.JWT_SECRET;
+// const secret = process.env.JWT_SECRET;
+const secret = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
 exports.register = [
     body('fullname').isLength({ min: 1 }),
     body('designation').isLength({ min: 1 }),
@@ -112,11 +113,12 @@ exports.login = [
 ];
 
 exports.profileupdate = [
-    body('firstname').isLength({ min: 1 }),
-    body('lastname').isLength({ min: 1 }),
+    body('fullname').isLength({ min: 1 }),
+    body('mobile').isLength({ min: 1 }),
     (req , res) => {
         try
         {
+            console.log(req.user)
             const errors = validationResult(req);
             if(!errors.isEmpty())
             {
@@ -134,6 +136,7 @@ exports.profileupdate = [
         }
         catch (err)
         {
+            console.log(err)
             return apiResponse.errorResponse(res, err);
         }
     }
@@ -144,6 +147,7 @@ exports.changePassword = [
     (req , res) => {
         try
         {
+            console.log(req.body)
             const errors = validationResult(req);
             if(!errors.isEmpty())
             {
@@ -172,7 +176,7 @@ exports.userInfo = [
     (req , res) => {
         try
         {
-            Users.findById(req.user._id,'firstname lastname email mobile createdAt' ,function (err, user){ 
+            Users.findById(req.user._id,'fullname designation organization fathername mobile email aadhar dateofbirth createdAt' ,function (err, user){ 
                 if (err){ 
                     return apiResponse.unauthorizedResponse(res, "User no found.");
                 } 
@@ -192,7 +196,7 @@ exports.userList = [
 	//auth,
 	function (req, res) {
 		try {
-			Users.find().then((userstatus)=>{
+			Users.find().select('fullname designation organization fathername mobile email aadhar dateofbirth createdAt').then((userstatus)=>{
 				if(userstatus.length > 0){
 					return apiResponse.successResponseWithData(res, "Data retrieved successfully.", userstatus);
 				}else{
@@ -208,6 +212,7 @@ exports.userList = [
 
 exports.authenticateToken = [
     (req, res, next) =>  {
+        console.log(secret)
     // Gather the jwt access token from the request header
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
