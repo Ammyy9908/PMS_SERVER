@@ -14,6 +14,11 @@ const taskSchema = mongoose.Schema({
   },{
     timestamps:true
 });
+taskSchema.virtual('userinfo',{
+  ref:'Users',
+  localField:'users',
+  foreignField:'_id',
+})
 taskSchema.set('toObject', { virtuals: true });
 taskSchema.set('toJSON', { virtuals: true });
 var Tasks = mongoose.model('Tasks', taskSchema);

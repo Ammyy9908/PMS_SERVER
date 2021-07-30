@@ -1,5 +1,4 @@
 var { Users } = require('../models/Users')
-const bodyParser = require('body-parser');
 const { body, validationResult } = require('express-validator');
 const apiResponse = require("../helpers/apiResponse");
 const utility = require("../helpers/utility");
@@ -118,7 +117,6 @@ exports.profileupdate = [
     (req , res) => {
         try
         {
-            console.log(req.user)
             const errors = validationResult(req);
             if(!errors.isEmpty())
             {
@@ -147,7 +145,6 @@ exports.changePassword = [
     (req , res) => {
         try
         {
-            console.log(req.body)
             const errors = validationResult(req);
             if(!errors.isEmpty())
             {
@@ -212,7 +209,6 @@ exports.userList = [
 
 exports.authenticateToken = [
     (req, res, next) =>  {
-        console.log(secret)
     // Gather the jwt access token from the request header
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

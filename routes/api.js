@@ -12,7 +12,7 @@ router.get("/get-users-list", auth, AuthController.userList);
 /*=============== Task Route =========================*/
 router.post("/add-new-task", auth, TaskControllers.addTasks);
 router.post("/update-task", auth, TaskControllers.updateTasks);
-router.get("/taskInfo:taskid", auth, TaskControllers.taskInfo);
-router.get("/get-task-list", auth, TaskControllers.taskList);
+router.get("/task-info/:taskid", auth, TaskControllers.taskInfo);
+router.get("/task-list", auth, TaskControllers.taskList);
 
 module.exports = router;

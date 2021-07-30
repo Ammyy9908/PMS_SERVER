@@ -3,11 +3,10 @@ const { body, validationResult } = require('express-validator');
 const apiResponse = require("../helpers/apiResponse");
 
 exports.addTasks = [
-    body('fullname').isLength({ min: 1 }),
-    body('designation').isLength({ min: 1 }),
-    body('email').isEmail(),
-    body('password').isLength({ min: 5 }),
-    body('mobile').isLength({ min: 5 }),
+    body('taskname').isLength({ min: 4 }),
+    body('subject').isLength({ min: 10 }),
+    body('description').isLength({ min: 10 }),
+    body('users').isArray(),
     (req, res) => {
         try {
            const errors = validationResult(req);
@@ -16,35 +15,30 @@ exports.addTasks = [
                return apiResponse.validationErrorWithData(res, "Validation Error .",errors.array());
            }
            else{
-                bcrypt.hash(req.body.password,10, function(err , hash){
-                    let otp = utility.randomNumber(4);
-                    var usr = new Users({
-                        fullname: req.body.fullname,
-                        designation : req.body.designation,
-                        organization : req.body.organization,
-                        fathername : req.body.fathername,
-                        password : hash,
-                        mobile : req.body.mobile,
-                        email : req.body.email,
-                        aadhar : req.body.aadhar,
-                        dateofbirth : req.body.dateofbirth,
-                    });
-                    usr.save(function (err){
-                    if(err) { return apiResponse.errorResponse(req , err);}
-                        let userData = {
-                            _id : usr._id,
-                            fullname : usr.fullname,
-                            designation : usr.designation,
-                            organization : usr.organization,
-                            fathername : usr.fathername,
-                            mobile : usr.mobile,
-                            email : usr.email,
-                            aadhar : usr.aadhar,
-                            dateofbirth : usr.dateofbirth,
-                        };
-                        return apiResponse.successResponseWithData(res , "Registration Success.",userData);
-                    });
-               });
+                var task = new Tasks({
+                    taskname: req.body.taskname,
+                    subject : req.body.subject,
+                    description : req.body.description,
+                    startDate : req.body.startDate,
+                    endDate : req.body.endDate,
+                    createdBy : req.user._id,
+                    users : req.body.users,
+                    beneficiary : req.body.beneficiary,
+                });
+                task.save(function (err){
+                if(err) { return apiResponse.errorResponse(req , err);}
+                    let taskData = {
+                        _id : task._id,
+                        taskname : task.taskname,
+                        subject : task.subject,
+                        description : task.description,
+                        startDate : task.startDate,
+                        endDate : task.endDate,
+                        users : task.users,
+                        beneficiary : task.beneficiary,
+                    };
+                    return apiResponse.successResponseWithData(res , "Registration Success.",taskData);
+                });
            }
         }
         catch(err){
@@ -54,23 +48,30 @@ exports.addTasks = [
 ];
 
 exports.updateTasks = [
-    body('fullname').isLength({ min: 1 }),
-    body('mobile').isLength({ min: 1 }),
+    body('taskId').isLength({ min: 10 }),
     (req , res) => {
         try
         {
-            console.log(req.user)
             const errors = validationResult(req);
             if(!errors.isEmpty())
             {
                 return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
             }
             else{
-                Users.findByIdAndUpdate(req.user._id, req.body, {},function (err) {
+                Tasks.findByIdAndUpdate(req.body.taskId, {
+                    taskname: req.body.taskname,
+                    subject : req.body.subject,
+                    description : req.body.description,
+                    startDate : req.body.startDate,
+                    endDate : req.body.endDate,
+                    createdBy : req.user._id,
+                    users : req.body.users,
+                    beneficiary : req.body.beneficiary,
+                }, {},function (err) {
                     if (err) { 
                         return apiResponse.errorResponse(res, err); 
                     }else{
-                        return apiResponse.successResponseWithData(res,"Profile update Success.", req.body);
+                        return apiResponse.successResponseWithData(res,"Task update Success.", req.body);
                     }
                 });
             }
@@ -87,14 +88,13 @@ exports.taskInfo = [
     (req , res) => {
         try
         {
-            Users.findById(req.user._id,'fullname designation organization fathername mobile email aadhar dateofbirth createdAt' ,function (err, user){ 
-                if (err){ 
-                    return apiResponse.unauthorizedResponse(res, "User no found.");
-                } 
-                else{ 
-                    return apiResponse.successResponseWithData(res,"Data retrieved successfully.", user);
-                } 
-            }); 
+            Tasks.findOne({_id : req.params.taskid}).select('taskname subject description startDate endDate users beneficiary createdBy createdAt').populate('userinfo', 'fullname mobile').exec(function(err, data) {
+                if(data){
+                    return apiResponse.successResponseWithData(res, "Data retrieved successfully.", data);
+                }else{
+                    return apiResponse.errorResponse(res, err);
+                }
+            });
         }
         catch (err)
         {
@@ -106,7 +106,7 @@ exports.taskInfo = [
 exports.taskList = [
 	function (req, res) {
 		try {
-			Users.find().select('fullname designation organization fathername mobile email aadhar dateofbirth createdAt').then((userstatus)=>{
+			Tasks.find().select('taskname subject description startDate endDate users beneficiary createdBy createdAt').populate('userinfo', 'fullname mobile').then((userstatus)=>{
 				if(userstatus.length > 0){
 					return apiResponse.successResponseWithData(res, "Data retrieved successfully.", userstatus);
 				}else{
