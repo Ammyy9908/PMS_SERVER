@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run clean && next dev",
-    "build": "npm run clean && next build",
+    "build": "npm run clean",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
