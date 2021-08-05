@@ -14,5 +14,5 @@ router.post("/add-new-task", auth, TaskControllers.addTasks);
 router.post("/update-task", auth, TaskControllers.updateTasks);
 router.get("/task-info/:taskid", auth, TaskControllers.taskInfo);
 router.get("/task-list", auth, TaskControllers.taskList);
-
+router.get("/created-task-list", auth, TaskControllers.createdTaskList);
 module.exports = router;

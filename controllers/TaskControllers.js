@@ -120,6 +120,23 @@ exports.taskList = [
 	}
 ];
 
+exports.createdTaskList = [
+	function (req, res) {
+		try {
+			Tasks.find({ createdBy: req.user._id}).select('taskname subject description startDate endDate users beneficiary createdBy createdAt').populate('userinfo', 'fullname mobile').then((userstatus)=>{
+				if(userstatus.length > 0){
+					return apiResponse.successResponseWithData(res, "Data retrieved successfully.", userstatus);
+				}else{
+					return apiResponse.successResponseWithData(res, "No Record Found.", []);
+				}
+			});
+		} catch (err) {
+			//throw error in json response with status 500. 
+			return apiResponse.errorResponse(res, err);
+		}
+	}
+];
+
 
 
 

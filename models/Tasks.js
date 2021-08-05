@@ -11,6 +11,7 @@ const taskSchema = mongoose.Schema({
     },
     users: [{ type : mongoose.Schema.ObjectId, ref: 'Users' }],
     beneficiary: [{ type : mongoose.Schema.ObjectId, ref: 'Users' }],
+    completed:{ type:Boolean, default:false },
   },{
     timestamps:true
 });

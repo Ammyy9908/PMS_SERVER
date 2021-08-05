@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
     aadhar : {type: String },
     dateofbirth : {type: String },
     password : {type: String },
-    active:{ type:Boolean, required: true , default:0},
+    active:{ type:Boolean, required: true , default:1},
   },{
     timestamps:true
 });
