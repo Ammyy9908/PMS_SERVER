@@ -77,10 +77,15 @@ exports.login = [
 								if(user.active) {
                                     let userData = {
                                         _id: user._id,
-                                        first_name: user.firstname,
-                                        last_name: user.lastname,
-                                        name: user.firstname+' '+user.lastname,
+                                        name: user.fullname,
                                         email: user.email,
+                                        designation : user.designation,
+                                        organization : user.organization,
+                                        fathername : user.fathername,
+                                        mobile : user.mobile,
+                                        email : user.email,
+                                        aadhar : user.aadhar,
+                                        dateofbirth : user.dateofbirth,
                                     };
                                     const jwtPayload = userData;
                                     const jwtData = {
@@ -169,6 +174,98 @@ exports.changePassword = [
     }
 ];
 
+exports.sendOtp = [
+    body('mobile').isLength({ min: 7 }),
+    (req , res) => {
+        try
+        {
+            const errors = validationResult(req);
+            if(!errors.isEmpty())
+            {
+                return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+            }
+            else{
+                let otp = utility.randomNumber(4);
+                Users.findOneAndUpdate({mobile: req.body.mobile}, {$set:{otp:otp}}, {useFindAndModify: false},function(err, user){
+                    if(err){
+                        return apiResponse.errorResponse(res, err); 
+                    }
+                    else if(!user)
+                    {
+                        return apiResponse.errorResponse(res, 'User Not Found');
+                    }
+                    return apiResponse.successResponseWithData(res,"OTP send Successfully.", otp);
+                });
+            }
+        }
+        catch (err)
+        {
+            return apiResponse.errorResponse(res, err);
+        }
+    }
+];
+
+exports.validateOtp = [
+    body('mobile').isLength({ min: 7 }),
+    body('otp').isLength({ min: 4 }),
+    (req , res) => {
+        try
+        {
+            const errors = validationResult(req);
+            if(!errors.isEmpty())
+            {
+                return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+            }
+            else{
+                Users.findOne({ mobile: req.body.mobile },'otp' ,function (err, user){ 
+                    if (err){ 
+                        return apiResponse.unauthorizedResponse(res, "User no found.");
+                    } 
+                    if (!user) {
+                        return apiResponse.errorResponse(res, "User no found.");
+                    }
+                    else if(!user && user.otp === req.body.otp){ 
+                        return apiResponse.successResponseWithData(res,"OTP Validated successfully.", user);
+                    }
+                    return apiResponse.validationErrorWithData(res, "OTP does not match .", []);
+                }); 
+            }
+        }
+        catch (err)
+        {
+            return apiResponse.errorResponse(res, err);
+        }
+    }
+];
+exports.forgotPassword = [
+    body('email').isLength({ min: 1 }).isEmail(),
+    (req , res) => {
+        try
+        {
+            const errors = validationResult(req);
+            if(!errors.isEmpty())
+            {
+                return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+            }
+            else{
+                Users.findOne({ email: req.body.email },'fullname mobile email' ,function (err, user){ 
+                    if (err){ 
+                        return apiResponse.unauthorizedResponse(res, "User no found.");
+                    } 
+                    else{ 
+
+                        return apiResponse.successResponseWithData(res,"Data retrieved successfully.", user);
+                    } 
+                }); 
+            }
+        }
+        catch (err)
+        {
+            return apiResponse.errorResponse(res, err);
+        }
+    }
+];
+
 exports.userInfo = [
     (req , res) => {
         try
@@ -215,7 +312,7 @@ exports.authenticateToken = [
     if (token == null) return res.sendStatus(401) // if there isn't any token
     jwt.verify(token, secret, (err, user) => {
         console.log(err)
-        if (err) return res.sendStatus(403)
+        if (err) return apiResponse.unauthorizedResponse(res, err);
         req.user = user
         next() // pass the execution off to whatever request the client intended
     })
