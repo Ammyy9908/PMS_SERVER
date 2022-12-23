@@ -13,6 +13,7 @@ exports.register = [
     body('password').isLength({ min: 5 }),
     body('mobile').isLength({ min: 5 }),
     (req, res) => {
+        console.log(req.body)
         try {
            const errors = validationResult(req);
            if(!errors.isEmpty())
@@ -20,6 +21,7 @@ exports.register = [
                return apiResponse.validationErrorWithData(res, "Validation Error .",errors.array());
            }
            else{
+               console.log(req.body)
                 bcrypt.hash(req.body.password,10, function(err , hash){
                     let otp = utility.randomNumber(4);
                     var usr = new Users({
@@ -177,6 +179,7 @@ exports.changePassword = [
 exports.sendOtp = [
     body('mobile').isLength({ min: 7 }),
     (req , res) => {
+    console.log(req.body)
         try
         {
             const errors = validationResult(req);
@@ -186,7 +189,7 @@ exports.sendOtp = [
             }
             else{
                 let otp = utility.randomNumber(4);
-                Users.findOneAndUpdate({mobile: req.body.mobile}, {$set:{otp:otp}}, {useFindAndModify: false},function(err, user){
+                Users.findOneAndUpdate({mobile: req.body.mobile}, {$set:{otp:otp}},function(err, user){
                     if(err){
                         return apiResponse.errorResponse(res, err); 
                     }
@@ -217,18 +220,13 @@ exports.validateOtp = [
                 return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
             }
             else{
-                Users.findOne({ mobile: req.body.mobile },'otp' ,function (err, user){ 
-                    if (err){ 
-                        return apiResponse.unauthorizedResponse(res, "User no found.");
-                    } 
-                    if (!user) {
-                        return apiResponse.errorResponse(res, "User no found.");
-                    }
-                    else if(!user && user.otp === req.body.otp){ 
+
+                Users.findOne({ mobile: req.body.mobile,otp:req.body.otp }).then(user => {
+                    if(user && user.otp === req.body.otp){
                         return apiResponse.successResponseWithData(res,"OTP Validated successfully.", user);
                     }
                     return apiResponse.validationErrorWithData(res, "OTP does not match .", []);
-                }); 
+                })
             }
         }
         catch (err)
@@ -308,7 +306,9 @@ exports.authenticateToken = [
     (req, res, next) =>  {
     // Gather the jwt access token from the request header
     const authHeader = req.headers['authorization'];
+    console.log(authHeader)
     const token = authHeader && authHeader.split(' ')[1];
+    console.log(token)
     if (token == null) return res.sendStatus(401) // if there isn't any token
     jwt.verify(token, secret, (err, user) => {
         console.log(err)

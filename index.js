@@ -1,6 +1,7 @@
-require('./database')
+
 const express = require('express')
 const bodyParser = require('body-parser')
+const connect_db = require('./database')
 const cors = require('cors')
 const fileUpload = require('express-fileupload');
 var apiRouter = require("./routes/api");
@@ -10,12 +11,18 @@ var app = express()
 app.use(fileUpload({
     createParentPath: true
 }));
-app.use(bodyParser.json())
-app.use(cors({origin:'http://localhost:3000', 
-credentials:true,            //access-control-allow-credentials:true
-optionSuccessStatus:200}))
+app.use(express.json())
+app.use(cors())
 app.use("/api/", apiRouter);
 app.get("/" , (req , res) => {
     res.send({ message: "Node Project connected"});
 });
-app.listen(4555,() => console.log('Server started at :4555'))
+app.listen(5001,async () => {
+    console.log('Server started at :5001')
+    if(await connect_db()){
+        console.log("Database connected")
+    }
+    else{
+        console.log("Database not connected")
+    }
+})
