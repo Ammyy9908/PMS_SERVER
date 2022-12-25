@@ -33,7 +33,7 @@ exports.register = [
         if (user) {
           return apiResponse.validationErrorWithData(
             res,
-            "User already exists with this email or phone",
+            "User already exists",
             errors.array()
           );
         }
