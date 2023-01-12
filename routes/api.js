@@ -9,7 +9,7 @@ router.post("/login", AuthController.login);
 router.post("/send-otp", AuthController.sendOtp);
 router.post("/validate-otp", AuthController.validateOtp);
 router.get("/forgot-password", AuthController.forgotPassword);
-router.post("/profileupdate", auth, AuthController.profileupdate);
+router.put("/profileupdate", auth, AuthController.profileupdate);
 router.post("/changepassword", auth, AuthController.changePassword);
 router.get("/user-info", auth, AuthController.userInfo);
 router.get("/get-users-list", auth, AuthController.userList);
@@ -21,7 +21,7 @@ router.get("/task-list", auth, TaskControllers.taskList);
 router.get("/created-tasks", auth, TaskControllers.createdTasks);
 router.get("/following-task-list", auth, TaskControllers.followingTaskList);
 router.get("/leader-task-list", auth, TaskControllers.leaderTaskList);
-router.delete("/delete-task", auth, TaskControllers.taskDelete);
+router.delete("/delete-task/:taskId", auth, TaskControllers.taskDelete);
 router.post("/complete-task", auth, TaskControllers.taskComplete);
 /*======WorkSpace Route========= */
 router.post("/work-space/create", auth, WorkSpaceController.createWorkSpace);

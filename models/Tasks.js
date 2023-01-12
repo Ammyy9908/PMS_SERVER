@@ -1,30 +1,30 @@
 var mongoose = require("mongoose");
 const taskSchema = mongoose.Schema(
-   {
-      taskname: { type: String, required: true },
-      subject: { type: String },
-      description: { type: String },
-      startDate: { type: Date, required: true },
-      endDate: { type: Date, required: true },
-      endTime: { type: String, required: false },
-      createdBy: {
-         type: String,
-         ref: "Users",
-      },
-      priority: {
-         type: String,
-         enum: ["High", "Medium", "Low", "Average"],
-         default: "Average",
-      },
-      followers: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
-      leader: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
-      beneficiary: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
-      completed: { type: Boolean, default: false },
-      files: { type: Array },
-   },
-   {
-      timestamps: true,
-   }
+  {
+    taskname: { type: String, required: true },
+    subject: { type: String },
+    description: { type: String },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    endTime: { type: String, required: false },
+    createdBy: {
+      type: String,
+      ref: "Users",
+    },
+    priority: {
+      type: String,
+      enum: ["High", "Medium", "Low", "Average"],
+      default: "Average",
+    },
+    followers: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    leader: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    beneficiary: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    completed: { type: Boolean, default: false },
+    files: { type: Array },
+  },
+  {
+    timestamps: true,
+  }
 );
 // taskSchema.virtual('followerslist',{
 //   ref:'Users',
