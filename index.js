@@ -17,7 +17,7 @@ app.use("/api/", apiRouter);
 app.get("/" , (req , res) => {
     res.send({ message: "Node Project connected"});
 });
-app.listen(6001,async () => {
+app.listen(5001,async () => {
     console.log('Server started at :5001')
     if(await connect_db()){
         console.log("Database connected")
