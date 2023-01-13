@@ -17,6 +17,7 @@ exports.addTasks = [
           errors.array()
         );
       } else {
+        console.log(req.body);
         var task = new Tasks({
           taskname: req.body.taskname,
           subject: req.body.subject,
@@ -28,9 +29,11 @@ exports.addTasks = [
           followers: req.body.followers,
           leader: req.body.leader,
           beneficiary: req.body.beneficiary,
+          endTime: req.body.endTime,
         });
         task.save(function (err) {
           if (err) {
+            console.log(err);
             return apiResponse.errorResponse(res, err);
           }
           let taskData = {
@@ -136,9 +139,7 @@ exports.taskList = [
         page = Math.max(0, req.params.page);
       console.log(req.user._id);
       Tasks.find({ createdBy: req.user._id })
-        .select(
-          "taskname subject description startDate endDate followers leader beneficiary createdBy createdAt"
-        )
+
         .limit(perPage)
         .skip(perPage * page)
         .sort({ createdAt: "desc" })
@@ -276,19 +277,32 @@ exports.leaderTaskList = [
 ];
 
 exports.taskDelete = [
-  (req, res) => {
-    try {
-      Tasks.findByIdAndRemove(req.params.taskid, (err, data) => {
-        if (!err)
+  async (req, res) => {
+    console.log(req.user);
+    const task = await Tasks.findOne({ _id: req.params.taskId });
+    console.log(task);
+    const isLeader = task.leader === req.user._id ? true : false;
+    const isCreator = task.createdBy === req.user._id ? true : false;
+    console.log(isCreator, isLeader);
+    if (isLeader || isCreator) {
+      try {
+        let deleted = await Tasks.deleteOne({
+          _id: req.params.taskId,
+        });
+        console.log(deleted);
+        if (deleted) {
           return apiResponse.successResponseWithData(
             res,
-            "Data Deleted successfully.",
-            data
+            "Task Deleted successfully.",
+            deleted
           );
-        else return apiResponse.errorResponse(res, err);
-      });
-    } catch (err) {
-      return apiResponse.errorResponse(res, err);
+        }
+      } catch (err) {
+        console.log(err);
+        return apiResponse.errorResponse(res, err);
+      }
+    } else {
+      return apiResponse.errorResponse(res, "You are not authorized to delete");
     }
   },
 ];
