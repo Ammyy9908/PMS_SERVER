@@ -19,6 +19,10 @@ const taskSchema = mongoose.Schema(
     followers: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
     leader: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
     beneficiary: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    endTime: {
+      type: String,
+      required: true,
+    },
     completed: { type: Boolean, default: false },
     files: { type: Array },
   },
