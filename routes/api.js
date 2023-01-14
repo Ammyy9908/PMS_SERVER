@@ -12,6 +12,7 @@ router.get("/forgot-password", AuthController.forgotPassword);
 router.put("/profileupdate", auth, AuthController.profileupdate);
 router.post("/changepassword", auth, AuthController.changePassword);
 router.get("/user-info", auth, AuthController.userInfo);
+router.get("/profile/:id", auth, AuthController.getProfile);
 router.get("/get-users-list", auth, AuthController.userList);
 /*=============== Task Route =========================*/
 router.post("/add-new-task", auth, TaskControllers.addTasks);

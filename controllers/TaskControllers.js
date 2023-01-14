@@ -138,8 +138,7 @@ exports.taskList = [
       var perPage = 10,
         page = Math.max(0, req.params.page);
       console.log(req.user._id);
-      Tasks.find({ createdBy: req.user._id })
-
+      Tasks.find()
         .limit(perPage)
         .skip(perPage * page)
         .sort({ createdAt: "desc" })
@@ -245,15 +244,9 @@ exports.leaderTaskList = [
       var perPage = 10,
         page = Math.max(0, req.params.page);
       Tasks.find({ leader: req.user._id })
-        .select(
-          "taskname subject description startDate endDate followers leader beneficiary createdBy createdAt"
-        )
         .limit(perPage)
         .skip(perPage * page)
         .sort({ createdAt: "desc" })
-        .populate("followerslist", "fullname mobile")
-        .populate("leaderinfo", "fullname mobile")
-        .populate("beneficiaryinfo", "fullname mobile")
         .then((userstatus) => {
           if (userstatus.length > 0) {
             return apiResponse.successResponseWithData(

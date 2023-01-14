@@ -352,6 +352,19 @@ exports.userInfo = [
   },
 ];
 
+exports.getProfile = [
+  async (req, res) => {
+    const { id } = req.params;
+    try {
+      const user = await Users.findOne({ _id: id });
+      return apiResponse.successResponseWithData(res, "User found", user);
+    } catch (e) {
+      console.log(e);
+      return apiResponse.errorResponse(res, e.message);
+    }
+  },
+];
+
 exports.userList = [
   //auth,
   function (req, res) {

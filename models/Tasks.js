@@ -16,8 +16,8 @@ const taskSchema = mongoose.Schema(
       enum: ["High", "Medium", "Low", "Average"],
       default: "Average",
     },
-    followers: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
-    leader: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    followers: [{ type: String }],
+    leader: { type: String, required: true },
     beneficiary: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
     endTime: {
       type: String,
