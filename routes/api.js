@@ -2,13 +2,59 @@ var express = require("express");
 const AuthController = require("../controllers/AuthController");
 const TaskControllers = require("../controllers/TaskControllers");
 const WorkSpaceController = require("../controllers/WorkSpaceController");
+const { Users } = require("../models/Users");
+const bcrypt = require("bcrypt");
+const { body, validationResult } = require("express-validator");
+const apiResponse = require("../helpers/apiResponse");
 const auth = AuthController.authenticateToken;
 var router = express.Router();
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
 router.post("/send-otp", AuthController.sendOtp);
 router.post("/validate-otp", AuthController.validateOtp);
-router.get("/forgot-password", AuthController.forgotPassword);
+router.post(
+  "/forgot-password",
+  body("password").isLength({ min: 6 }),
+  async (req, res) => {
+    try {
+      console.log(req.body);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return apiResponse.validationErrorWithData(
+          res,
+          "Validation Error.",
+          errors.array()
+        );
+      } else {
+        //first find the user
+        const user = await Users.findOne({ email: req.body.email });
+
+        if (!user) {
+          console.log("User not found");
+          return apiResponse.errorResponse(res, "Unauthorized");
+        }
+
+        // update the password with encrypted password
+
+        const hashed = await bcrypt.hashSync(req.body.password, 10);
+
+        const updated = await Users.updateOne(
+          { email: req.body.email },
+          { password: hashed }
+        );
+        if (updated) {
+          return apiResponse.successResponse(
+            res,
+            "Password successfully changed"
+          );
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      return apiResponse.errorResponse(res, err);
+    }
+  }
+);
 router.put("/profileupdate", auth, AuthController.profileupdate);
 router.post("/changepassword", auth, AuthController.changePassword);
 router.get("/user-info", auth, AuthController.userInfo);

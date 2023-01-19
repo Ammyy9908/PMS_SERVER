@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+
 exports.successResponse = function (res, msg) {
   var data = {
     // status: true,

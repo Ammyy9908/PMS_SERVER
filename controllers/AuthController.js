@@ -4,6 +4,7 @@ const apiResponse = require("../helpers/apiResponse");
 const utility = require("../helpers/utility");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sendMail = require("../helpers/mailer");
 // const secret = process.env.JWT_SECRET;
 const secret =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
@@ -52,6 +53,7 @@ exports.register = [
           });
           usr.save(function (err) {
             if (err) {
+              console.log(err);
               return apiResponse.errorResponse(res, err);
             }
             let userData = {
@@ -222,7 +224,7 @@ exports.changePassword = [
 ];
 
 exports.sendOtp = [
-  body("mobile").isLength({ min: 7 }),
+  body("email").isLength({ min: 7 }),
   (req, res) => {
     console.log(req.body);
     try {
@@ -235,15 +237,26 @@ exports.sendOtp = [
         );
       } else {
         let otp = utility.randomNumber(4);
-        Users.findOneAndUpdate(
-          { mobile: req.body.mobile },
+        Users.updateOne(
+          { email: req.body.email },
           { $set: { otp: otp } },
-          function (err, user) {
+          async function (err, user) {
             if (err) {
               return apiResponse.errorResponse(res, err);
             } else if (!user) {
               return apiResponse.errorResponse(res, "User Not Found");
             }
+
+            await sendMail({
+              subject: "DK Task Verification",
+              to: req.body.email,
+              template: `<h1>Welcome to Dk Tasks</h1>
+            <p>Your OTP for verification is ${otp}</p>
+            `,
+              message:
+                "Welcome to DK Tasks\n Your OTP for verification is " + otp,
+            });
+
             return apiResponse.successResponseWithData(
               res,
               "OTP send Successfully.",
@@ -259,7 +272,7 @@ exports.sendOtp = [
 ];
 
 exports.validateOtp = [
-  body("mobile").isLength({ min: 7 }),
+  body("email").isLength({ min: 7 }),
   body("otp").isLength({ min: 4 }),
   (req, res) => {
     try {
@@ -272,7 +285,7 @@ exports.validateOtp = [
         );
       } else {
         Users.findOne({
-          mobile: req.body.mobile,
+          email: req.body.email,
           otp: req.body.otp,
         }).then((user) => {
           if (user && user.otp === req.body.otp) {
@@ -295,8 +308,9 @@ exports.validateOtp = [
   },
 ];
 exports.forgotPassword = [
-  body("email").isLength({ min: 1 }).isEmail(),
-  (req, res) => {
+  body("email").isEmail(),
+  body("password").isLength({ min: 6 }),
+  async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -306,21 +320,27 @@ exports.forgotPassword = [
           errors.array()
         );
       } else {
-        Users.findOne(
-          { email: req.body.email },
-          "fullname mobile email",
-          function (err, user) {
-            if (err) {
-              return apiResponse.unauthorizedResponse(res, "User no found.");
-            } else {
-              return apiResponse.successResponseWithData(
-                res,
-                "Data retrieved successfully.",
-                user
-              );
-            }
-          }
+        //first find the user
+        const user = await Users.findOne({ email: req.email });
+
+        if (!user) {
+          return apiResponse.errorResponse(res, "Unauthorized");
+        }
+
+        // update the password with encrypted password
+
+        const hashed = await bcrypt.hashSync(req.body.password, 10);
+
+        const updated = await Users.updateOne(
+          { _id: req, user, id },
+          { password: hashed }
         );
+        if (updated) {
+          return apiResponse.successResponse(
+            res,
+            "Password successfully changed"
+          );
+        }
       }
     } catch (err) {
       return apiResponse.errorResponse(res, err);
