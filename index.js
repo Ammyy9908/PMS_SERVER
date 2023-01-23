@@ -23,18 +23,18 @@ app.get("/", (req, res) => {
 
 // chron Jobs start from here
 
-cron.schedule("0 1 * * *", async () => {
-  console.log("running a task every day 1am");
-  await sendMail({
-    to: "sumit@kodnest.com",
-    message: "Hi you got this  alert from cron jobs",
-    subject: "Cron Schedular",
-    template: `<h1>Hi you got this  alert from cron jobs</h1>`,
-  });
-});
+// cron.schedule("0 1 * * *", async () => {
+//   console.log("running a task every day 1am");
+//   await sendMail({
+//     to: "sumit@kodnest.com",
+//     message: "Hi you got this  alert from cron jobs",
+//     subject: "Cron Schedular",
+//     template: `<h1>Hi you got this  alert from cron jobs</h1>`,
+//   });
+// });
 
 // chron Jobs ends here
-app.listen(5002, async () => {
+app.listen(5001, async () => {
   console.log("Server started at :5001");
   if (await connect_db()) {
     console.log("Database connected");
