@@ -10,6 +10,7 @@ exports.createWorkSpace = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log(errors);
         return apiResponse.validationErrorWithData(
           res,
           "Validation Error .",
@@ -20,8 +21,10 @@ exports.createWorkSpace = [
           name: req.body.name,
           description: req.body.description,
           createdBy: req.user._id,
+          members: req.body.members,
         });
         workspace.save(function (err) {
+          console.log(err);
           if (err) {
             return apiResponse.errorResponse(res, err);
           }
@@ -39,6 +42,7 @@ exports.createWorkSpace = [
         });
       }
     } catch (err) {
+      console.log(err);
       apiResponse.errorResponse(res, err);
     }
   },
@@ -62,3 +66,11 @@ exports.fetchWorkSpace = [
     }
   },
 ];
+
+// export.deleteWorkSpace = [
+//   (req,res)=>{
+//     try{
+//       WorkSpace.deleteOne()
+//     }
+//   }
+// ]

@@ -3,6 +3,10 @@ const taskSchema = mongoose.Schema(
   {
     taskname: { type: String, required: true },
     subject: { type: String },
+    workplace_id: {
+      type: String,
+      required: true,
+    },
     description: { type: String },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },

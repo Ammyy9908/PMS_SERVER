@@ -30,6 +30,7 @@ exports.addTasks = [
           leader: req.body.leader,
           beneficiary: req.body.beneficiary,
           endTime: req.body.endTime,
+          workplace_id: req.body.workplace_id,
         });
         task.save(function (err) {
           if (err) {

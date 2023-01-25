@@ -71,6 +71,6 @@ router.get("/leader-task-list", auth, TaskControllers.leaderTaskList);
 router.delete("/delete-task/:taskId", auth, TaskControllers.taskDelete);
 router.post("/complete-task", auth, TaskControllers.taskComplete);
 /*======WorkSpace Route========= */
-router.post("/work-space/create", auth, WorkSpaceController.createWorkSpace);
-router.get("/work-space/list", auth, WorkSpaceController.fetchWorkSpace);
+router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
+router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
 module.exports = router;
