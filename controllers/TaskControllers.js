@@ -138,7 +138,6 @@ exports.taskList = [
     try {
       var perPage = 10,
         page = Math.max(0, req.params.page);
-      console.log(req.user._id);
       Tasks.find()
         .limit(perPage)
         .skip(perPage * page)

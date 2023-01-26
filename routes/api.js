@@ -73,4 +73,5 @@ router.post("/complete-task", auth, TaskControllers.taskComplete);
 /*======WorkSpace Route========= */
 router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
 router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
+router.delete("/workspace/:id", auth, WorkSpaceController.deleteWorkSpace);
 module.exports = router;

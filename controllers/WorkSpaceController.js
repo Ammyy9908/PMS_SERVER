@@ -67,10 +67,27 @@ exports.fetchWorkSpace = [
   },
 ];
 
-// export.deleteWorkSpace = [
-//   (req,res)=>{
-//     try{
-//       WorkSpace.deleteOne()
-//     }
-//   }
-// ]
+exports.deleteWorkSpace = [
+  async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+    try {
+      const deleted = await WorkSpace.deleteOne({
+        createdBy: req.user._id,
+        _id: id,
+      });
+      if (!deleted) {
+        apiResponse.errorResponse(res, "Error in deleting the workplace");
+      } else {
+        const workplaces = await WorkSpace.find({ createdBy: req.user._id });
+        apiResponse.successResponseWithData(
+          res,
+          "Successfully workplace deleted!",
+          workplaces
+        );
+      }
+    } catch (e) {
+      apiResponse.errorResponse(res, err);
+    }
+  },
+];
