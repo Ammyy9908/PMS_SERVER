@@ -22,9 +22,7 @@ async function sendOTPtoWhatsappAlert({ name, mobile, otp }) {
         },
       }
     );
-    console.log(r.data);
   } catch (e) {
-    console.log(e);
     return false;
   }
 }

@@ -24,7 +24,6 @@ async function sendMail({ to, subject, template, message }) {
     });
     return info.messageId;
   } catch (e) {
-    console.log(e);
     return false;
   }
 }

@@ -15,7 +15,6 @@ exports.register = [
   body("password").isLength({ min: 5 }),
   body("mobile").isLength({ min: 5 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -53,7 +52,6 @@ exports.register = [
           });
           usr.save(function (err) {
             if (err) {
-              console.log(err);
               return apiResponse.errorResponse(res, err);
             }
             let userData = {
@@ -76,7 +74,6 @@ exports.register = [
         });
       }
     } catch (err) {
-      console.log("Coming heereerree.");
       apiResponse.errorResponse(res, err);
     }
   },
@@ -180,7 +177,6 @@ exports.profileupdate = [
         });
       }
     } catch (err) {
-      console.log(err);
       return apiResponse.errorResponse(res, err);
     }
   },
@@ -223,10 +219,25 @@ exports.changePassword = [
   },
 ];
 
+exports.changeWorkSpace = [
+  async (req, res) => {
+    try {
+      const updated = await Users.updateOne(
+        { _id: req.user._id },
+        { activeWorkSpace: req.body.workspace }
+      );
+      if (updated) {
+        apiResponse.successResponse(res, "Workplace switched");
+      }
+    } catch (e) {
+      apiResponse.errorResponse(res, e);
+    }
+  },
+];
+
 exports.sendOtp = [
   body("email").isLength({ min: 7 }),
   (req, res) => {
-    console.log(req.body);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -379,7 +390,6 @@ exports.getProfile = [
       const user = await Users.findOne({ _id: id });
       return apiResponse.successResponseWithData(res, "User found", user);
     } catch (e) {
-      console.log(e);
       return apiResponse.errorResponse(res, e.message);
     }
   },
@@ -419,12 +429,11 @@ exports.authenticateToken = [
   (req, res, next) => {
     // Gather the jwt access token from the request header
     const authHeader = req.headers["authorization"];
-    console.log(authHeader);
+
     const token = authHeader && authHeader.split(" ")[1];
-    console.log(token);
+
     if (token == null) return res.sendStatus(401); // if there isn't any token
     jwt.verify(token, secret, (err, user) => {
-      console.log(err);
       if (err) return apiResponse.unauthorizedResponse(res, err);
       req.user = user;
       next(); // pass the execution off to whatever request the client intended

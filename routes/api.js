@@ -17,7 +17,6 @@ router.post(
   body("password").isLength({ min: 6 }),
   async (req, res) => {
     try {
-      console.log(req.body);
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
@@ -30,7 +29,6 @@ router.post(
         const user = await Users.findOne({ email: req.body.email });
 
         if (!user) {
-          console.log("User not found");
           return apiResponse.errorResponse(res, "Unauthorized");
         }
 
@@ -50,7 +48,6 @@ router.post(
         }
       }
     } catch (err) {
-      console.log(err);
       return apiResponse.errorResponse(res, err);
     }
   }
@@ -60,6 +57,7 @@ router.post("/changepassword", auth, AuthController.changePassword);
 router.get("/user-info", auth, AuthController.userInfo);
 router.get("/profile/:id", auth, AuthController.getProfile);
 router.get("/get-users-list", auth, AuthController.userList);
+router.post("/profile/workspace/switch", auth, AuthController.changeWorkSpace);
 /*=============== Task Route =========================*/
 router.post("/add-new-task", auth, TaskControllers.addTasks);
 router.post("/update-task", auth, TaskControllers.updateTasks);
@@ -74,4 +72,5 @@ router.post("/complete-task", auth, TaskControllers.taskComplete);
 router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
 router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
 router.delete("/workspace/:id", auth, WorkSpaceController.deleteWorkSpace);
+router.post("/workspace/:id", auth, WorkSpaceController.modifyWorkplace);
 module.exports = router;

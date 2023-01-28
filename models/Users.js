@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema(
     otp: { type: String },
     zoneId: [{ type: mongoose.Schema.ObjectId, ref: "Zones" }],
     active: { type: Boolean, required: true, default: 1 },
+    activeWorkSpace: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

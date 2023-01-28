@@ -10,7 +10,6 @@ exports.createWorkSpace = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        console.log(errors);
         return apiResponse.validationErrorWithData(
           res,
           "Validation Error .",
@@ -24,7 +23,6 @@ exports.createWorkSpace = [
           members: req.body.members,
         });
         workspace.save(function (err) {
-          console.log(err);
           if (err) {
             return apiResponse.errorResponse(res, err);
           }
@@ -42,7 +40,6 @@ exports.createWorkSpace = [
         });
       }
     } catch (err) {
-      console.log(err);
       apiResponse.errorResponse(res, err);
     }
   },
@@ -70,7 +67,7 @@ exports.fetchWorkSpace = [
 exports.deleteWorkSpace = [
   async (req, res) => {
     const { id } = req.params;
-    console.log(id);
+
     try {
       const deleted = await WorkSpace.deleteOne({
         createdBy: req.user._id,
@@ -83,6 +80,35 @@ exports.deleteWorkSpace = [
         apiResponse.successResponseWithData(
           res,
           "Successfully workplace deleted!",
+          workplaces
+        );
+      }
+    } catch (e) {
+      apiResponse.errorResponse(res, err);
+    }
+  },
+];
+
+exports.modifyWorkplace = [
+  async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    try {
+      const modified = await WorkSpace.updateOne(
+        {
+          createdBy: req.user._id,
+          _id: id,
+        },
+        { name: name, description: description }
+      );
+      if (!modified) {
+        apiResponse.errorResponse(res, "Error in updating the workplace");
+      } else {
+        const workplaces = await WorkSpace.find({ createdBy: req.user._id });
+        apiResponse.successResponseWithData(
+          res,
+          "Successfully workplace updated!",
           workplaces
         );
       }

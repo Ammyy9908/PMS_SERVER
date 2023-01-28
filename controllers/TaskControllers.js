@@ -17,7 +17,6 @@ exports.addTasks = [
           errors.array()
         );
       } else {
-        console.log(req.body);
         var task = new Tasks({
           taskname: req.body.taskname,
           subject: req.body.subject,
@@ -34,7 +33,6 @@ exports.addTasks = [
         });
         task.save(function (err) {
           if (err) {
-            console.log(err);
             return apiResponse.errorResponse(res, err);
           }
           let taskData = {
@@ -271,18 +269,16 @@ exports.leaderTaskList = [
 
 exports.taskDelete = [
   async (req, res) => {
-    console.log(req.user);
     const task = await Tasks.findOne({ _id: req.params.taskId });
-    console.log(task);
+
     const isLeader = task.leader === req.user._id ? true : false;
     const isCreator = task.createdBy === req.user._id ? true : false;
-    console.log(isCreator, isLeader);
+
     if (isLeader || isCreator) {
       try {
         let deleted = await Tasks.deleteOne({
           _id: req.params.taskId,
         });
-        console.log(deleted);
         if (deleted) {
           return apiResponse.successResponseWithData(
             res,
@@ -291,7 +287,6 @@ exports.taskDelete = [
           );
         }
       } catch (err) {
-        console.log(err);
         return apiResponse.errorResponse(res, err);
       }
     } else {
