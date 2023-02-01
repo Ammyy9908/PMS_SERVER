@@ -48,17 +48,22 @@ exports.createWorkSpace = [
 exports.fetchWorkSpace = [
   (req, res) => {
     try {
-      WorkSpace.find({}, function (err, workspaces) {
-        if (err) {
-          return apiResponse.errorResponse(res, err);
+      WorkSpace.find(
+        { $or: [{ members: req.user._id }, { createdBy: req.user._id }] },
+        function (err, workspaces) {
+          if (err) {
+            console.log(err);
+            return apiResponse.errorResponse(res, err);
+          }
+          return apiResponse.successResponseWithData(
+            res,
+            "Workspaces fetched.",
+            workspaces
+          );
         }
-        return apiResponse.successResponseWithData(
-          res,
-          "Workspaces fetched.",
-          workspaces
-        );
-      });
+      );
     } catch (err) {
+      console.log(err);
       apiResponse.errorResponse(res, err);
     }
   },

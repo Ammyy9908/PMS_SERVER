@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const connect_db = require("./database");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
-var cron = require("node-cron");
+const path = require("path");
 var apiRouter = require("./routes/api");
 const sendMail = require("./helpers/mailer");
 require("dotenv").config();
@@ -14,8 +14,13 @@ app.use(
     createParentPath: true,
   })
 );
-app.use(express.json());
+app.use(express.static("public"));
+app.use(express.json({ limit: "15mb" }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cors());
+
+app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/api/", apiRouter);
 app.get("/", (req, res) => {
   res.send({ message: "Node Project connected" });

@@ -34,6 +34,7 @@
     "mongoose": "^5.13.3",
     "mongoose-custom-fields": "^1.0.2",
     "mongoose-paginate-v2": "^1.4.1",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.0"
   }

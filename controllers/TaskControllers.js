@@ -1,6 +1,18 @@
 var { Tasks } = require("../models/Tasks");
 const { body, validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
+var multer = require("multer");
+
+var storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./uploads");
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname + "-" + Date.now());
+  },
+});
+var upload = multer({ storage: storage }).single("document");
+
 var fs = require("fs");
 exports.addTasks = [
   body("taskname").isLength({ min: 2 }),
@@ -109,7 +121,7 @@ exports.taskInfo = [
     try {
       Tasks.findOne({ _id: req.params.taskid })
         .select(
-          "taskname subject description startDate endDate followers leader beneficiary createdBy createdAt"
+          "taskname subject description startDate endDate followers leader beneficiary createdBy createdAt completed files"
         )
         .populate("followerslist", "fullname mobile")
         .populate("leaderinfo", "fullname mobile")
@@ -298,6 +310,7 @@ exports.taskDelete = [
 exports.taskComplete = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {
+    console.log("Files", req.files);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -307,33 +320,34 @@ exports.taskComplete = [
           errors.array()
         );
       } else {
-        var file = JSON.parse(JSON.stringify(req.files));
-        var file_name = new Date().getTime() + "_" + file.files.name;
-        var buffer = new Buffer.from(file.files.data.data);
-        fs.writeFile(`uploads/${file_name}`, buffer, async (err) => {
-          fs.unlink(__dirname + "/" + file_name, () => {});
-        });
-        Tasks.findByIdAndUpdate(
-          req.body.taskId,
-          {
+        console.log("Inside Else");
+        if (req.files) {
+          console.log(req.body.taskId);
+          var file = req.files.document;
+          console.log("File Name", file);
+          var file_name = new Date().getTime() + "_" + file.name;
+          var buffer = new Buffer.from(file.data);
+          fs.writeFile(`public/uploads/${file_name}`, buffer, async (err) => {
+            fs.unlink(__dirname + "/" + file_name, () => {});
+          });
+          const completed = await Tasks.findOneAndUpdate(req.body.taskId, {
             completed: true,
-            files: { filepath: `uploads/${file_name}` },
-          },
-          {},
-          function (err) {
-            if (err) {
-              return apiResponse.errorResponse(res, err);
-            } else {
-              return apiResponse.successResponseWithData(
-                res,
-                "Task update Success.",
-                req.body
-              );
-            }
+            files: {
+              filepath: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+            },
+          });
+
+          if (!completed) {
+            return apiResponse.errorResponse(res, "Error in submitting Task");
           }
-        );
+          return apiResponse.successResponse(
+            res,
+            "Task Completed Successfully"
+          );
+        }
       }
     } catch (err) {
+      console.log(err);
       return apiResponse.errorResponse(res, err);
     }
   },

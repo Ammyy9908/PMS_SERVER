@@ -6,8 +6,10 @@ const { Users } = require("../models/Users");
 const bcrypt = require("bcrypt");
 const { body, validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
+const uploadFileMiddleware = require("../helpers/upload");
 const auth = AuthController.authenticateToken;
 var router = express.Router();
+
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
 router.post("/send-otp", AuthController.sendOtp);

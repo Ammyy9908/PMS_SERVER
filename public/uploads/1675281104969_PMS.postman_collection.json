@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "8a857be7-cc19-4165-94fd-1deebc99a849",
+		"name": "PMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24630435"
+	},
+	"item": [
+		{
+			"name": "Placements",
+			"item": [
+				{
+					"name": "Create a new Placement Drive",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"placement_name\":\"Kodnest On campus\",\n    \"drive_data\":{\n        \"company_name\":\"Microsoft\",\n        \"designation\":\"SDE1\",\n        \"job_description\":\"job_description\",\n        \"job_id\":\"MS1234\",\n        \"location\":\"Bangalore,India\",\n        \"salary\":\"5.6L\",\n        \"position\":\"Full Stack Web Developer\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URI}}/placements/create",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Placement Drive with Its Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/placement-service/api/v1/placements/3dc44d1c-95c4-11ed-ba2f-3af9d323b501",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"placement-service",
+								"api",
+								"v1",
+								"placements",
+								"3dc44d1c-95c4-11ed-ba2f-3af9d323b501"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate Placement Drive",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/3dc44d1c-95c4-11ed-ba2f-3af9d323b501/deactivate",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"3dc44d1c-95c4-11ed-ba2f-3af9d323b501",
+								"deactivate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate Placement",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/3dc44d1c-95c4-11ed-ba2f-3af9d323b501/activate",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"3dc44d1c-95c4-11ed-ba2f-3af9d323b501",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get active Placements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/active",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all placements",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URI}}/placements",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inactive Placements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/inactive",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"inactive"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Criteria from Placement Drive",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/placement-service/api/v1/placements/a1f24340-96fd-11ed-87a6-3af9d323b501/criteria/2177331a-9748-11ed-893a-3af9d323b50",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"placement-service",
+								"api",
+								"v1",
+								"placements",
+								"a1f24340-96fd-11ed-87a6-3af9d323b501",
+								"criteria",
+								"2177331a-9748-11ed-893a-3af9d323b50"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Applicants",
+			"item": [
+				{
+					"name": "Apply Placement",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"candidate_id\":\"3\",\n    \"placement_name\":\"Kodnest On campus Recruitment\",\n    \"student_details\":{\n        \"candidate_name\":\"Hemanth\",\n        \"email\":\"sb78639@gmail.com\",\n        \"phone\":\"+91-7406644532\",\n        \"gender\":\"M\",\n        \"tenth_percent\":\"65\",\n        \"twelth_or_diploma_percent\":63.5,\n        \"graduation_percent\":78.9,\n        \"ugpg_programme_name\":\"B.E\",\n        \"branch\":\"ISE\",\n        \"graduation_year\":\"2022\",\n        \"college_name\":\"SIR MVIT BANGALORE\",\n        \"college_location\":\"Bangalore\",\n        \"active_backlogs\":0,\n        \"gap_in_education\":1,\n        \"current_location\":\"Bangalore\",\n        \"current_location_state\":\"Karnataka\",\n        \"ready_to_relocate\":false,\n        \"walkin_interview\":false,\n        \"resume_url\":\"https://drive.google.com/file/d/116jS5ZNH1Bh9UctL0HTYUBZazSn3Lu2J/view\"\n\n    },\n    \"placement_id\":\"3dc44d1c-95c4-11ed-ba2f-3af9d323b501\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URI}}/placements/candidate/add",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"candidate",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Application Status",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/application/c9a0d51a-95c6-11ed-ba2f-3af9d323b501/update/eligible",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"application",
+								"c9a0d51a-95c6-11ed-ba2f-3af9d323b501",
+								"update",
+								"eligible"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all applicants from particular placement drives",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URI}}/placements/c9a0d51a-95c6-11ed-ba2f-3af9d323b501/applicants",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"c9a0d51a-95c6-11ed-ba2f-3af9d323b501",
+								"applicants"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Criterias",
+			"item": [
+				{
+					"name": "Create Criteria",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"Fee Paid\",\n    \"value\":\"True\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URI}}/placements/criteria/create",
+							"host": [
+								"{{BASE_URI}}"
+							],
+							"path": [
+								"placements",
+								"criteria",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assigning a Criteria to a Placement",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/placement-service/api/v1/placements/3dc44d1c-95c4-11ed-ba2f-3af9d323b501/criteria/1e511dda-95c8-11ed-ba2f-3af9d323b501/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"placement-service",
+								"api",
+								"v1",
+								"placements",
+								"3dc44d1c-95c4-11ed-ba2f-3af9d323b501",
+								"criteria",
+								"1e511dda-95c8-11ed-ba2f-3af9d323b501",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Criteria By Criteria id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/placement-service/api/v1/criterias/1e511dda-95c8-11ed-ba2f-3af9d323b501",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"placement-service",
+								"api",
+								"v1",
+								"criterias",
+								"1e511dda-95c8-11ed-ba2f-3af9d323b501"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "UID",
+			"value": "6399c993442b1e62f11ab5a7"
+		},
+		{
+			"key": "PID",
+			"value": "8ea21acf-62a8-4eed-8296-09becc495eee"
+		},
+		{
+			"key": "Status",
+			"value": "drop"
+		},
+		{
+			"key": "APP_ID",
+			"value": "6399cc83aafa95de93d09fe9"
+		},
+		{
+			"key": "BASE_URI",
+			"value": "http://localhost:8080/placement-service/api/v1"
+		}
+	]
+}
