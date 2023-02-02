@@ -310,7 +310,7 @@ exports.taskDelete = [
 exports.taskComplete = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {
-    console.log("Files", req.files);
+    console.log("Files", req.body);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -330,12 +330,15 @@ exports.taskComplete = [
           fs.writeFile(`public/uploads/${file_name}`, buffer, async (err) => {
             fs.unlink(__dirname + "/" + file_name, () => {});
           });
-          const completed = await Tasks.findOneAndUpdate(req.body.taskId, {
-            completed: true,
-            files: {
-              filepath: `http://20.219.16.124:5001/static/uploads/${file_name}`,
-            },
-          });
+          const completed = await Tasks.updateOne(
+            { _id: req.body.taskId },
+            {
+              completed: true,
+              files: {
+                filepath: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+              },
+            }
+          );
 
           if (!completed) {
             return apiResponse.errorResponse(res, "Error in submitting Task");
