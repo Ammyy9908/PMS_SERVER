@@ -307,10 +307,22 @@ exports.taskDelete = [
   },
 ];
 
+exports.taskClose = [
+  body("taskId").isLength({ min: 10 }),
+  async (req, res) => {
+    const { id } = req.params;
+    const uptaded = await Tasks.updateOne({ _id: id }, { completed: true });
+
+    if (!uptaded) {
+      return apiResponse.errorResponse(res, "Unable to close this task");
+    }
+    return apiResponse.successResponse(res, "Task closed successfully");
+  },
+];
+
 exports.taskComplete = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {
-    console.log("Files", req.body);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -320,11 +332,8 @@ exports.taskComplete = [
           errors.array()
         );
       } else {
-        console.log("Inside Else");
         if (req.files) {
-          console.log(req.body.taskId);
           var file = req.files.document;
-          console.log("File Name", file);
           var file_name = new Date().getTime() + "_" + file.name;
           var buffer = new Buffer.from(file.data);
           fs.writeFile(`public/uploads/${file_name}`, buffer, async (err) => {
@@ -333,9 +342,12 @@ exports.taskComplete = [
           const completed = await Tasks.updateOne(
             { _id: req.body.taskId },
             {
-              completed: true,
-              files: {
-                filepath: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+              $push: {
+                files: {
+                  filepath: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+                  filename: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+                  submitted_by: { name: req.user.fullname, id: req.user._id },
+                },
               },
             }
           );
@@ -343,9 +355,13 @@ exports.taskComplete = [
           if (!completed) {
             return apiResponse.errorResponse(res, "Error in submitting Task");
           }
-          return apiResponse.successResponse(
+
+          return apiResponse.successResponseWithData(
             res,
-            "Task Completed Successfully"
+            "Task Completed Successfully",
+            {
+              file: `http://20.219.16.124:5001/static/uploads/${file_name}`,
+            }
           );
         }
       }

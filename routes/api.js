@@ -2,11 +2,11 @@ var express = require("express");
 const AuthController = require("../controllers/AuthController");
 const TaskControllers = require("../controllers/TaskControllers");
 const WorkSpaceController = require("../controllers/WorkSpaceController");
+const ReviewController = require("../controllers/ReviewController");
 const { Users } = require("../models/Users");
 const bcrypt = require("bcrypt");
 const { body, validationResult } = require("express-validator");
 const apiResponse = require("../helpers/apiResponse");
-const uploadFileMiddleware = require("../helpers/upload");
 const auth = AuthController.authenticateToken;
 var router = express.Router();
 
@@ -70,6 +70,8 @@ router.get("/following-task-list", auth, TaskControllers.followingTaskList);
 router.get("/leader-task-list", auth, TaskControllers.leaderTaskList);
 router.delete("/delete-task/:taskId", auth, TaskControllers.taskDelete);
 router.post("/complete-task", auth, TaskControllers.taskComplete);
+router.patch("/close-task/:id", auth, TaskControllers.taskClose);
+router.post("/task/review", auth, ReviewController.createReview);
 /*======WorkSpace Route========= */
 router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
 router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
