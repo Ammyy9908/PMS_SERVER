@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema(
     dateofbirth: { type: String },
     password: { type: String, required: true },
     otp: { type: String },
+    deviceId: { type: String },
     zoneId: [{ type: mongoose.Schema.ObjectId, ref: "Zones" }],
     active: { type: Boolean, required: true, default: 1 },
     activeWorkSpace: {

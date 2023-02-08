@@ -148,7 +148,13 @@ exports.taskList = [
     try {
       var perPage = 10,
         page = Math.max(0, req.params.page);
-      Tasks.find()
+      Tasks.find({
+        $or: [
+          { leader: req.user._id },
+          { createdBy: req.user._id },
+          { followers: req.user._id },
+        ],
+      })
         .limit(perPage)
         .skip(perPage * page)
         .sort({ createdAt: "desc" })
@@ -320,6 +326,19 @@ exports.taskClose = [
   },
 ];
 
+exports.getUserTasks = [
+  body("taskId").isLength({ min: 10 }),
+  async (req, res) => {
+    console.log(req.params.uid);
+    const tasks = await Tasks.find({ followers: req.params.uid });
+
+    if (tasks.length) {
+      return apiResponse.successResponseWithData(res, "Tasks fetched", tasks);
+    }
+    return apiResponse.errorResponse(res, "No Tasks found for this user");
+  },
+];
+
 exports.taskComplete = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {
@@ -356,12 +375,12 @@ exports.taskComplete = [
             return apiResponse.errorResponse(res, "Error in submitting Task");
           }
 
+          const task = await Tasks.findOne({ _id: req.body.taskId });
+
           return apiResponse.successResponseWithData(
             res,
             "Task Completed Successfully",
-            {
-              file: `http://20.219.16.124:5001/static/uploads/${file_name}`,
-            }
+            task
           );
         }
       }

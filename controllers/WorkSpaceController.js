@@ -49,7 +49,12 @@ exports.fetchWorkSpace = [
   (req, res) => {
     try {
       WorkSpace.find(
-        { $or: [{ members: req.user._id }, { createdBy: req.user._id }] },
+        {
+          $or: [
+            { members: { $in: [req.user.id] } },
+            { createdBy: req.user._id },
+          ],
+        },
         function (err, workspaces) {
           if (err) {
             console.log(err);

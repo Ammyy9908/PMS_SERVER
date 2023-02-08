@@ -49,6 +49,7 @@ exports.register = [
             email: req.body.email,
             aadhar: req.body.aadhar,
             dateofbirth: req.body.dateofbirth,
+            deviceId: req.body.deviceId,
           });
           usr.save(function (err) {
             if (err) {
@@ -364,7 +365,7 @@ exports.userInfo = [
     try {
       Users.findById(
         req.user._id,
-        "fullname designation organization fathername mobile email aadhar dateofbirth createdAt",
+        "fullname designation organization fathername mobile email aadhar dateofbirth createdAt deviceId",
         function (err, user) {
           if (err) {
             return apiResponse.unauthorizedResponse(res, "User no found.");
@@ -401,7 +402,7 @@ exports.userList = [
     try {
       Users.find()
         .select(
-          "fullname designation organization fathername mobile email aadhar dateofbirth createdAt"
+          "fullname designation organization fathername mobile email aadhar dateofbirth createdAt deviceId"
         )
         .then((userstatus) => {
           if (userstatus.length > 0) {

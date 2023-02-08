@@ -21,3 +21,22 @@ exports.createReview = [
     }
   },
 ];
+
+exports.getReview = [
+  async (req, res) => {
+    const { task_id } = req.params;
+
+    try {
+      const reviews = await Review.find({ task: task_id });
+      return apiResponse.successResponseWithData(
+        res,
+        "Reviews fetched",
+        reviews
+      );
+    } catch (e) {
+      if (e) {
+        return apiResponse.errorResponse(res, e.message);
+      }
+    }
+  },
+];

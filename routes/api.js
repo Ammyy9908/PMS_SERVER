@@ -1,6 +1,7 @@
 var express = require("express");
 const AuthController = require("../controllers/AuthController");
 const TaskControllers = require("../controllers/TaskControllers");
+const NotificationController = require("../controllers/NotificationController");
 const WorkSpaceController = require("../controllers/WorkSpaceController");
 const ReviewController = require("../controllers/ReviewController");
 const { Users } = require("../models/Users");
@@ -65,6 +66,7 @@ router.post("/add-new-task", auth, TaskControllers.addTasks);
 router.post("/update-task", auth, TaskControllers.updateTasks);
 router.get("/task-info/:taskid", auth, TaskControllers.taskInfo);
 router.get("/task-list", auth, TaskControllers.taskList);
+router.get("/task-list/:uid", auth, TaskControllers.getUserTasks);
 router.get("/created-tasks", auth, TaskControllers.createdTasks);
 router.get("/following-task-list", auth, TaskControllers.followingTaskList);
 router.get("/leader-task-list", auth, TaskControllers.leaderTaskList);
@@ -72,9 +74,11 @@ router.delete("/delete-task/:taskId", auth, TaskControllers.taskDelete);
 router.post("/complete-task", auth, TaskControllers.taskComplete);
 router.patch("/close-task/:id", auth, TaskControllers.taskClose);
 router.post("/task/review", auth, ReviewController.createReview);
+router.get("/task/:task_id/reviews", auth, ReviewController.getReview);
 /*======WorkSpace Route========= */
 router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
 router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
 router.delete("/workspace/:id", auth, WorkSpaceController.deleteWorkSpace);
 router.post("/workspace/:id", auth, WorkSpaceController.modifyWorkplace);
+router.post("/notify", NotificationController.notify);
 module.exports = router;
