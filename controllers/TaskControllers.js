@@ -326,6 +326,36 @@ exports.taskClose = [
   },
 ];
 
+exports.getUserCompletedTasks = [
+  async (req, res) => {
+    const { id } = req.params;
+    console.log("UID", id);
+    const completed = await Tasks.find({
+      followers: { $in: [id] },
+      completed: true,
+    });
+    if (!completed.length) {
+      return apiResponse.errorResponse(res, "No Records found");
+    }
+    return apiResponse.successResponseWithData(res, "Records Found", completed);
+  },
+];
+
+exports.getUserPendingTasks = [
+  async (req, res) => {
+    const { id } = req.params;
+    console.log("UID", id);
+    const completed = await Tasks.find({
+      followers: { $in: [id] },
+      completed: false,
+    });
+    if (!completed.length) {
+      return apiResponse.errorResponse(res, "No Records found");
+    }
+    return apiResponse.successResponseWithData(res, "Records Found", completed);
+  },
+];
+
 exports.getUserTasks = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {

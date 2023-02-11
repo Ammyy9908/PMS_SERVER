@@ -75,6 +75,8 @@ router.post("/complete-task", auth, TaskControllers.taskComplete);
 router.patch("/close-task/:id", auth, TaskControllers.taskClose);
 router.post("/task/review", auth, ReviewController.createReview);
 router.get("/task/:task_id/reviews", auth, ReviewController.getReview);
+router.get("/tasks/completed/:id", auth, TaskControllers.getUserCompletedTasks);
+router.get("/tasks/pending/:id", auth, TaskControllers.getUserPendingTasks);
 /*======WorkSpace Route========= */
 router.post("/workspace/create", auth, WorkSpaceController.createWorkSpace);
 router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
