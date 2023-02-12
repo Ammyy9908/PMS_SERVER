@@ -1,5 +1,6 @@
 var express = require("express");
 const AuthController = require("../controllers/AuthController");
+const AlertController = require("../controllers/AlertController");
 const TaskControllers = require("../controllers/TaskControllers");
 const NotificationController = require("../controllers/NotificationController");
 const WorkSpaceController = require("../controllers/WorkSpaceController");
@@ -63,7 +64,7 @@ router.get("/get-users-list", auth, AuthController.userList);
 router.post("/profile/workspace/switch", auth, AuthController.changeWorkSpace);
 /*=============== Task Route =========================*/
 router.post("/add-new-task", auth, TaskControllers.addTasks);
-router.post("/update-task", auth, TaskControllers.updateTasks);
+router.post("/task/update/:id", auth, TaskControllers.updateTasks);
 router.get("/task-info/:taskid", auth, TaskControllers.taskInfo);
 router.get("/task-list", auth, TaskControllers.taskList);
 router.get("/task-list/:uid", auth, TaskControllers.getUserTasks);
@@ -83,4 +84,8 @@ router.get("/workspace/list", auth, WorkSpaceController.fetchWorkSpace);
 router.delete("/workspace/:id", auth, WorkSpaceController.deleteWorkSpace);
 router.post("/workspace/:id", auth, WorkSpaceController.modifyWorkplace);
 router.post("/notify", NotificationController.notify);
+router.post("/tokens/", NotificationController.fetchTokens);
+router.get("/alerts/:id", auth, AlertController.getUserAlerts);
+
+router.patch("/alert/:id", auth, AlertController.setAlertSeen);
 module.exports = router;

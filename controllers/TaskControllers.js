@@ -72,7 +72,7 @@ exports.addTasks = [
 ];
 
 exports.updateTasks = [
-  body("taskId").isLength({ min: 10 }),
+  body("id").isLength({ min: 10 }),
   (req, res) => {
     try {
       const errors = validationResult(req);
@@ -83,18 +83,21 @@ exports.updateTasks = [
           errors.array()
         );
       } else {
-        Tasks.findByIdAndUpdate(
-          req.body.taskId,
+        Tasks.updateOne(
+          { _id: req.body.id },
           {
             taskname: req.body.taskname,
             subject: req.body.subject,
             description: req.body.description,
             startDate: req.body.startDate,
             endDate: req.body.endDate,
+            priority: req.body.priority,
             createdBy: req.user._id,
             followers: req.body.followers,
             leader: req.body.leader,
             beneficiary: req.body.beneficiary,
+            endTime: req.body.endTime,
+            workplace_id: req.body.workplace_id,
           },
           {},
           function (err) {
@@ -329,7 +332,6 @@ exports.taskClose = [
 exports.getUserCompletedTasks = [
   async (req, res) => {
     const { id } = req.params;
-    console.log("UID", id);
     const completed = await Tasks.find({
       followers: { $in: [id] },
       completed: true,
@@ -344,7 +346,6 @@ exports.getUserCompletedTasks = [
 exports.getUserPendingTasks = [
   async (req, res) => {
     const { id } = req.params;
-    console.log("UID", id);
     const completed = await Tasks.find({
       followers: { $in: [id] },
       completed: false,
@@ -359,7 +360,6 @@ exports.getUserPendingTasks = [
 exports.getUserTasks = [
   body("taskId").isLength({ min: 10 }),
   async (req, res) => {
-    console.log(req.params.uid);
     const tasks = await Tasks.find({ followers: req.params.uid });
 
     if (tasks.length) {
