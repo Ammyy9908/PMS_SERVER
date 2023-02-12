@@ -45,6 +45,18 @@ exports.createWorkSpace = [
   },
 ];
 
+// exports.getWorkplaceUsers = [
+//   (req,res)=>{
+//     const {id} = req.params.id;
+//     try{
+
+//       const users = WorkSpace
+//     }
+//     catch(e){
+//       apiResponse.errorResponse(res, err);
+//     }
+//   }
+// ]
 exports.fetchWorkSpace = [
   (req, res) => {
     try {
@@ -70,6 +82,26 @@ exports.fetchWorkSpace = [
     } catch (err) {
       console.log(err);
       apiResponse.errorResponse(res, err);
+    }
+  },
+];
+
+exports.getWorkspace = [
+  async (req, res) => {
+    const { id } = req.params;
+    console.log(`Workflow id`, id);
+
+    try {
+      const workplace = await WorkSpace.findOne({ _id: id });
+
+      console.log(workplace);
+      return apiResponse.successResponseWithData(
+        res,
+        "Workflow fetched",
+        workplace
+      );
+    } catch (e) {
+      return apiResponse.errorResponse(res, "Invalid workplace id");
     }
   },
 ];
@@ -102,7 +134,10 @@ exports.deleteWorkSpace = [
 exports.modifyWorkplace = [
   async (req, res) => {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, members } = req.body;
+    console.log(id, name, description, members);
+
+    console.log(req.body);
 
     try {
       const modified = await WorkSpace.updateOne(
@@ -110,8 +145,10 @@ exports.modifyWorkplace = [
           createdBy: req.user._id,
           _id: id,
         },
-        { name: name, description: description }
+        { name: name, description: description, members: members }
       );
+
+      console.log(modified);
       if (!modified) {
         apiResponse.errorResponse(res, "Error in updating the workplace");
       } else {

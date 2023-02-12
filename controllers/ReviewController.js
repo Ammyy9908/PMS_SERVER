@@ -13,8 +13,11 @@ exports.createReview = [
         task: id,
       });
 
-      await newReview.save();
-      apiResponse.successResponse(res, "Successfully review added");
+      const newReviewData = await newReview.save();
+
+      apiResponse.successResponseWithData(res, "Successfully review added", {
+        review: newReviewData,
+      });
     } catch (e) {
       console.log(e);
       apiResponse.errorResponse(res, "Error while creating review");
